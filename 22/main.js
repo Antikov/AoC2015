@@ -1,4 +1,3 @@
-
 var bossInitialStats = {
   'hp':51,
   'damage':9
