@@ -2,13 +2,13 @@ var bossInitialStats = {
   'hp':100,
   'armor':2,
   'damage':8
-}
+};
 
 var heroInitialStats = {
   'hp':100,
   'armor':0,
   'damage':0
-}
+};
 
 var weapons = [
   { 'name':'Dagger', 'cost': 8, 'damage': 4, 'armor': 0},
@@ -40,7 +40,7 @@ function isHeroWinBattle(bossStats, heroStats) {
   var heroHP = heroStats.hp;
   while (bossHP > 0 && heroHP > 0) {
     bossHP -= Math.max(heroStats.damage - bossStats.armor, 1);
-    heroHP -= Math.max(bossStats.damage - heroStats.armor, 1) 
+    heroHP -= Math.max(bossStats.damage - heroStats.armor, 1);
   }
   return bossHP <= 0;
 }
