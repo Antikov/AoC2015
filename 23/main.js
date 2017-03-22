@@ -1,7 +1,8 @@
+var registers = {"a":0, "b":0};
+
 var fs = require("fs");
 var input = fs.readFileSync("input").toString().trim().split("\n");
 
-var registers = {"a":0, "b":0};
 var instructions = input.map(function(value) {
   return value.split(" ");
 });
