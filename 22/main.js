@@ -33,7 +33,10 @@ function applyBuffs(bossStats, heroStats, buffs) {
   if (buffs.shield) {
     buffs.shield--;
     heroStats.armor = 7;
+  } else {
+    heroStats.armor = 0;
   }
+  
   if (buffs.poison) {
     buffs.poison--;
     bossStats.hp -= 3;
