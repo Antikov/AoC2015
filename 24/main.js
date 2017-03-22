@@ -3,73 +3,58 @@ var input = fs.readFileSync("input").toString().trim().split("\n").map(function(
   return parseInt(value);
 });
 
-var possibleGroups = [];
+input.sort(function(a,b) {return b-a;});
+
 var solutions = {};
 
-var firstGroup = "";
 var minGroupLen = input.length;
 
-var use = [];
-input.forEach(function(value) {
-  use.push(false);
-});
-
-function unusedElements() {
-  return input.filter(function(value, index) {
-    return !use[index];
-  });
-}
-
-function usedElements() {
-  return input.filter(function(value, index) {
-    return !use[index];
-  });
-}
-
-function backtrack(current1, current2, firstGroupLen) {
+function backtrack(group1, group2, remaining, current1, current2) {
   if (current1 == 0 && current2 == 0) {
-    var solution = unusedElements();
-    if (!solutions.hasOwnProperty(solution.join("-"))) {
-      possibleGroups.push(solution);
-      solutions[solution.join("-")] = true;
-      console.log(solution);
+    minGroupLen = group1.length < minGroupLen ? group1.length : minGroupLen;
+    if (minGroupLen == group1.length && !solutions.hasOwnProperty(group1.join("-"))) {
+      solutions[group1.join("-")] = group1;
+      //console.log(group1, minGroupLen);
     }
     return;
   }
   
   if (current1 == 0) {
-    firstGroup = usedElements().join("-");
-    backtrack(current2, current1);
+    remaining.forEach(function(value, index) {
+      if (!solutions.hasOwnProperty(group1.join("-")) && current2 >= value && (group2.length ==0 || group2[group2.length - 1] >= value)) {
+        var newGroup1 = group1.slice();
+        var newGroup2 = group2.concat([value]);
+        var newRemaining = remaining.slice(0,index-1).concat(remaining.slice(index+1));
+        backtrack(newGroup1, newGroup2, newRemaining, current1, current2 - value);
+      }
+    });
     return;
   }
-
-  input.forEach(function(value, index) {
-    if (!use[index] && current1 >= value) {
-      use[index] = true;
-      backtrack(current1 - value, current2);
-      use[index] = false;
-    }
+  
+  remaining.forEach(function(value, index) {
+      if (current1 >= value && minGroupLen > group1.length && (group1.length == 0 || group1[group1.length - 1] >= value)) {
+        var newGroup1 = group1.concat([value]);
+        var newGroup2 = group2.slice();
+        var newRemaining = remaining.slice(0,index).concat(remaining.slice(index+1));
+        backtrack(newGroup1, newGroup2, newRemaining, current1 - value, current2);
+      }
   });
 }
 
 var sum = input.reduce(function(a,b) { return a + b; });
-backtrack(sum / 3, sum / 3, 0);
+
+backtrack([],[],input,sum / 3, sum / 3);
 
 //console.log(possibleGroups);
 
-var minLen = possibleGroups.map(function(value) {return value.length;}).sort(function(a,b) {return a-b;})[0];
-console.log(minLen);
-possibleGroups = possibleGroups.filter(function(value) {
-  return value.length == minLen;
-});
+//console.log(minGroupLen);
 
-console.log(possibleGroups);
-var qe = possibleGroups.map(function(value) {
-  var multiple = value.reduce(function(a,b) {
-    return a * b;
-  });
-  
-  return multiple;
+var qe = [];
+Object.keys(solutions).forEach(function(value) {
+  if (solutions[value].length == minGroupLen) {
+    var calculated = solutions[value].reduce(function(a,b) { return a * b;});
+    qe.push(calculated);
+  }
 });
 
 qe.sort(function(a,b) {return a-b;});
